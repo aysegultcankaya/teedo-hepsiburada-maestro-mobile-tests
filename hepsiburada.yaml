@@ -1,0 +1,253 @@
+appId: com.pozitron.hepsiburada
+---
+- launchApp:
+    clearState: true
+
+- tapOn:
+    id: searchTextField
+
+- inputText: "Adidas ayakkabi"
+
+- pressKey: Enter
+
+- extendedWaitUntil:
+    visible: "Hızlı Teslimat"
+    timeout: 15000
+
+- assertVisible:
+    id: addToCart
+    index: 0
+
+- copyTextFrom:
+    id: tvTitle
+- evalScript: ${output.resultsBefore = maestro.copiedText.replace(/[^0-9]/g, "")}
+
+- assertVisible:
+    text: ".*[aA]didas.*"
+
+- tapOn:
+    point: 4%,11%
+
+- tapOn: Beden
+
+- tapOn: Ara
+
+- inputText: "42"
+
+- tapOn:
+    text: "42"
+    index: 1
+
+- tapOn: Uygula
+
+- tapOn: Fiyat Aralığı
+
+- tapOn: En az
+
+- inputText: "3000"
+
+- tapOn: En çok
+
+- inputText: "5000"
+
+- tapOn: Uygula
+
+- tapOn: Renk
+
+- tapOn: Beyaz
+
+- tapOn: Uygula
+
+- tapOn: Cinsiyet
+
+- tapOn: Erkek
+
+- tapOn: Uygula
+
+- tapOn:
+    id: btnApply
+
+- extendedWaitUntil:
+    visible: ".*TL.*"
+    timeout: 15000
+
+- copyTextFrom:
+    id: tvTitle
+# BURASI ÖNEMLİ: resultsAfter olarak değiştirdik ve 0-9 yaptık
+- evalScript: ${output.resultsAfter = maestro.copiedText.replace(/[^0-9]/g, "")}
+
+# --- Sonuç değişti mi? ---
+- assertTrue: ${output.resultsAfter != output.resultsBefore}
+
+- repeat:
+    times: 4 # Maksimum kaydırma denemesi
+    commands:
+      # Eğer ekranda YOKSA kaydır, VARSA bu komutu atla
+      - runFlow:
+          when:
+            notVisible: "Cinsiyet"
+          commands:
+            - swipe:
+                start: "90%, 10%" 
+                end: "25%, 10%"   
+                duration: 1000
+
+- assertVisible: Cinsiyet
+
+- tapOn: Cinsiyet
+
+- assertVisible:
+    text: Erkek
+
+- assertVisible:
+    id: cbMultiSelection
+    checked: true
+
+- swipe:
+    from:
+      id: divider
+    direction: DOWN
+
+- swipe:
+    start: "25%, 10%"
+    end: "90%, 16%"
+    duration: 5000
+
+- repeat:
+    times: 4 # Maksimum kaydırma denemesi
+    commands:
+      - runFlow:
+          when:
+            notVisible: "Fiyat Aralığı"
+          commands:
+            - swipe:
+                start: "90%, 10%" 
+                end: "25%, 10%"   
+                duration: 1000
+
+- assertVisible: Fiyat Aralığı
+
+- tapOn: Fiyat Aralığı
+
+- assertVisible: 3000 - 5000 TL
+
+- assertVisible:
+    id: rbSingleSelection
+    checked: true
+
+- swipe:
+    from:
+      id: divider
+    direction: DOWN
+
+- swipe:
+    start: "25%, 10%"
+    end: "90%, 16%"
+    duration: 5000
+
+- repeat:
+    times: 4
+    commands:
+      - runFlow:
+          when:
+            notVisible: "Beden"
+          commands:
+            - swipe:
+                start: "90%, 10%" 
+                end: "25%, 10%"   
+                duration: 1000
+
+- assertVisible: Beden
+
+- tapOn: Beden
+
+- assertVisible: "42"
+
+- assertVisible:
+    id: cbMultiSelection
+    checked: true
+
+- swipe:
+    from:
+      id: divider
+    direction: DOWN
+
+- swipe:
+    start: "25%, 10%"
+    end: "90%, 16%"
+    duration: 5000
+
+- repeat:
+    times: 4
+    commands:
+      - runFlow:
+          when:
+            notVisible: "Renk"
+          commands:
+            - swipe:
+                start: "90%, 10%" 
+                end: "25%, 10%"   
+                duration: 1000
+
+- assertVisible: Renk
+
+- tapOn: Renk
+
+- assertVisible: Beyaz
+
+- assertVisible:
+    id: cbMultiSelection
+    checked: true
+
+- swipe:
+    from:
+      id: divider
+    direction: DOWN
+
+- assertVisible:
+    id: addToCart
+    index: 0
+
+- tapOn:
+    point: "30%,38%"
+
+- extendedWaitUntil:
+    visible: "Sepete Ekle"
+    timeout: 10000
+
+- tapOn:
+    id: pdpAddToCart
+
+- extendedWaitUntil:
+    visible: "Sepete git"
+    timeout: 10000
+
+- tapOn: Sepete git
+
+- extendedWaitUntil:
+    visible:
+      id: basketPage_headerText
+    timeout: 10000
+
+- runFlow:
+    when:
+      visible: "Sepetin şu an boş"
+    commands:
+      - assertTrue: ${false}
+
+- extendedWaitUntil:
+    visible: "Ödemeye Geç"
+    timeout: 10000
+
+- assertVisible:
+    id: productName
+
+# 11.2 Ürün adı görüntüleniyor (Adidas içeriyor mu?)
+- assertVisible:
+    id: productName
+    text: ".*[aA]didas.*"
+
+# 11.3 Temel bilgi görüntüleniyor (Renk/Beden)
+- assertVisible: ".*Beyaz.*"
+
+- assertVisible: ".*42.*"
